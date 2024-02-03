@@ -1,5 +1,6 @@
 // este archivo va ser el punto incial de la aplicación
-require('dotenv').config();
+
+require('dotenv').config(); // esto es necesario para poder leer las variables de entorno del archivo .env
 
 // esta es la forma de hacer importaciones en Node.js
 const express = require('express');
@@ -9,26 +10,19 @@ const { dbConnection } = require('./database/config');
 
 // crear el servidor de express
 const app = express();
-dbConnection();
 
 // Configurar cors
-app.use(cors()); // el use es conocido como un middleware
+app.use(cors()); // el use es conocido como un middleware, lo cual son funciones que se ejecutan antes de llamar a otras
+// Lectura y parseo del body
+app.use( express.json() );
 
+dbConnection();
 
 // RUTAS
-// req = lo que envia el cliente
-// res = lo que le respondemos al cliente
-app.get('/', (req, res) =>  {
-    /*res.json({
-        ok: true,
-        msg: 'Hola Carlos'
-    })*/
-    // 
-    res.status(400).json({
-        ok: true,
-        msg: 'Hola Carlos'
-    })
-});
+// configuramos a donde se debe de redirigir cuando pidan una determinada ruta
+app.use('/api/users', require('./routes/users'));
+app.use('/api/login', require('./routes/auth'));
+
 
 app.listen( process.env.PORT,  () =>  {
     console.log("servior corriendo en el puerto",  process.env.PORT);
